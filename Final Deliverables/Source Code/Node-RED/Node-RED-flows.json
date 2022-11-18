@@ -1,0 +1,1522 @@
+[
+    {
+        "id": "9839df22ee52efd2",
+        "type": "tab",
+        "label": "Smart Solution for Railway",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bd0c178447dd1ca1",
+        "type": "cloudantplus out",
+        "z": "9839df22ee52efd2",
+        "name": "Sign Up",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "auth-table",
+        "service": "_ext_",
+        "payonly": true,
+        "operation": "insert",
+        "x": 980,
+        "y": 380,
+        "wires": [
+            [
+                "877959a33f9be5ce"
+            ]
+        ]
+    },
+    {
+        "id": "5c4ff4f9b0db37f6",
+        "type": "cloudantplus in",
+        "z": "9839df22ee52efd2",
+        "name": "Get Data",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "auth-table",
+        "service": "_ext_",
+        "search": "_query_",
+        "design": "",
+        "index": "",
+        "x": 480,
+        "y": 420,
+        "wires": [
+            [
+                "60ad3f584d5e7dd9"
+            ]
+        ]
+    },
+    {
+        "id": "3fdc01e6307df484",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Find the User",
+        "func": "msg.email = msg.payload.email;\nglobal.set('email', msg.email); \nmsg.password = msg.payload.password;\nmsg.payload = {\n    \"selector\": {\n        \"email\": msg.email\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 420,
+        "wires": [
+            [
+                "5c4ff4f9b0db37f6"
+            ]
+        ]
+    },
+    {
+        "id": "60ad3f584d5e7dd9",
+        "type": "switch",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "property": "payload.bookmark",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "nil",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 630,
+        "y": 420,
+        "wires": [
+            [
+                "a52be20b999717e0"
+            ],
+            [
+                "d04a0ab4e91429d7"
+            ]
+        ]
+    },
+    {
+        "id": "d04a0ab4e91429d7",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Authentication",
+        "func": "var password = msg.payload.docs[0].password\nif(msg.password == password){\n    msg.payload=\"Login\"\n}else{\n    msg.payload=\"Wrong Password\"\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 440,
+        "wires": [
+            [
+                "3a3e48435953fb76"
+            ]
+        ]
+    },
+    {
+        "id": "a52be20b999717e0",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Sign Up function",
+        "func": "msg.payload = { \"email\": msg.email, \"password\": msg.password }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 380,
+        "wires": [
+            [
+                "bd0c178447dd1ca1"
+            ]
+        ]
+    },
+    {
+        "id": "b012d52e30b202f6",
+        "type": "ui_ui_control",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "events": "all",
+        "x": 1360,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c603623ddab15978",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Booking Page Change",
+        "func": "// msg.payload = { \"group\": { \"hide\": [\"SignIn_LoginPage\"], \"show\": [\"SignIn_Boarding\", \"SignIn_Departure\", \"SignIn_Date\", \"SignIn_TicketCount\"], \"focus\": true } }\n// msg.payload = { \"tabs\": { \"show\": [\"SignIn\"], \"hide\": [\"Booking\"] } }\nmsg.payload = { \"group\": { \"hide\": [\"App_LoginPage\"], \"show\": [\"App_BookingPage\"], \"focus\": true } }\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 460,
+        "wires": [
+            [
+                "b012d52e30b202f6"
+            ]
+        ]
+    },
+    {
+        "id": "9beb113ddf12fec1",
+        "type": "inject",
+        "z": "9839df22ee52efd2",
+        "name": "Clear screen",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{ \"group\": { \"show\": [\"App_LiveTracking\"], \"hide\": [\"App_LoginPage\", \"App_BookingPage\", \"App_LiveTrackingDetails\", \"App_PNRQuery\", \"App_ServiceRequest\"], \"focus\": true } }",
+        "payloadType": "jsonata",
+        "x": 170,
+        "y": 140,
+        "wires": [
+            [
+                "fb31852aaf56c961"
+            ]
+        ]
+    },
+    {
+        "id": "fb31852aaf56c961",
+        "type": "ui_ui_control",
+        "z": "9839df22ee52efd2",
+        "name": "Initial Setup",
+        "events": "all",
+        "x": 330,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "630ee4834eedee9b",
+        "type": "ui_form",
+        "z": "9839df22ee52efd2",
+        "name": "Sign In",
+        "label": "",
+        "group": "bd0ae5386ad7daf2",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Email",
+                "value": "email",
+                "type": "email",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Password",
+                "value": "password",
+                "type": "password",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "email": "",
+            "password": ""
+        },
+        "payload": "",
+        "submit": "Sign In/Sign Up",
+        "cancel": "Cancel",
+        "topic": "",
+        "topicType": "str",
+        "splitLayout": "",
+        "className": "",
+        "x": 140,
+        "y": 420,
+        "wires": [
+            [
+                "3fdc01e6307df484"
+            ]
+        ]
+    },
+    {
+        "id": "3a3e48435953fb76",
+        "type": "switch",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Wrong Password",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Login",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 970,
+        "y": 440,
+        "wires": [
+            [
+                "3fe874b2dc88a95d"
+            ],
+            [
+                "c603623ddab15978"
+            ]
+        ]
+    },
+    {
+        "id": "3883f5e570fa2f1e",
+        "type": "ui_dropdown",
+        "z": "9839df22ee52efd2",
+        "name": "Page Change",
+        "label": "Move to",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "8fe9d7939381df1f",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "Live Tracking Page",
+                "value": "tracking",
+                "type": "str"
+            },
+            {
+                "label": "Booking page",
+                "value": "booking",
+                "type": "str"
+            },
+            {
+                "label": "PNR Query",
+                "value": "pnr",
+                "type": "str"
+            },
+            {
+                "label": "Service Request",
+                "value": "request",
+                "type": "str"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "topicType": "str",
+        "className": "",
+        "x": 160,
+        "y": 260,
+        "wires": [
+            [
+                "8993d7fc4655d61c"
+            ]
+        ]
+    },
+    {
+        "id": "10d51d4c3575879d",
+        "type": "ui_ui_control",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "events": "all",
+        "x": 640,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8993d7fc4655d61c",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Home Page Change",
+        "func": "if (msg.payload == \"tracking\"){\n    msg.payload = { \"group\": { \"show\": [\"App_LiveTrackingDetails\"], \"hide\": [\"App_LoginPage\", \"App_BookingPage\", \"App_PNRQuery\", \"App_ServiceRequest\"], \"focus\": true } }\n\n} else if (msg.payload == \"booking\"){\n    msg.payload = { \"group\": { \"show\": [\"App_LoginPage\"], \"hide\": [\"App_LiveTrackingDetails\", \"App_BookingPage\", \"App_PNRQuery\", \"App_ServiceRequest\"], \"focus\": true } }\n\n}else if(msg.payload==\"pnr\"){\n    msg.payload = { \"group\": { \"show\": [\"App_PNRQuery\"], \"hide\": [\"App_LoginPage\", \"App_BookingPage\", \"App_LiveTrackingDetails\", \"App_ServiceRequest\"], \"focus\": true } }\n}else {\n    msg.payload = { \"group\": { \"show\": [\"App_ServiceRequest\"], \"hide\": [\"App_LoginPage\", \"App_BookingPage\", \"App_LiveTrackingDetails\", \"App_PNRQuery\"], \"focus\": true } }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 260,
+        "wires": [
+            [
+                "10d51d4c3575879d"
+            ]
+        ]
+    },
+    {
+        "id": "877959a33f9be5ce",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Sign UP Notification",
+        "func": "msg.payload = \"Account Created Sucessfully. Login to book the ticket.\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1180,
+        "y": 380,
+        "wires": [
+            [
+                "05516376c7178b7b"
+            ]
+        ]
+    },
+    {
+        "id": "05516376c7178b7b",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Sign Up Sucessful",
+        "x": 1390,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3fe874b2dc88a95d",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Wrong Password",
+        "x": 1150,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "53bf4a48f55d9637",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Smart Solution For Railways",
+        "info": "By,\nShane Rex\nShyam\nVijay\nSubash\n\nTrain No : 12632",
+        "x": 800,
+        "y": 40,
+        "wires": [],
+        "icon": "font-awesome/fa-info-circle"
+    },
+    {
+        "id": "a605a733f0c5fc2e",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Clear screen",
+        "info": "",
+        "x": 110,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "c04189a99625f13a",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Navigation",
+        "info": "",
+        "x": 100,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "63ecc0961aae3aea",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Sign In/Sign Up",
+        "info": "",
+        "x": 120,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "cf4445fafca734ce",
+        "type": "ui_form",
+        "z": "9839df22ee52efd2",
+        "name": "Booking Form",
+        "label": "",
+        "group": "6fa057d618bea6c0",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "Train Number",
+                "value": "trainumber",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Passenger Name",
+                "value": "pname",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "No. of Tickets",
+                "value": "ticketcount",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Date of Journey",
+                "value": "date",
+                "type": "date",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "trainumber": "",
+            "pname": "",
+            "ticketcount": "",
+            "date": ""
+        },
+        "payload": "",
+        "submit": "Book",
+        "cancel": "Cancel",
+        "topic": "",
+        "topicType": "str",
+        "splitLayout": "",
+        "className": "",
+        "x": 160,
+        "y": 600,
+        "wires": [
+            [
+                "6312b0bb3794ba69"
+            ]
+        ]
+    },
+    {
+        "id": "927e3701789bc6ab",
+        "type": "cloudantplus out",
+        "z": "9839df22ee52efd2",
+        "name": "Booking",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "booking-table",
+        "service": "_ext_",
+        "payonly": true,
+        "operation": "insert",
+        "x": 620,
+        "y": 740,
+        "wires": [
+            [
+                "ef7b81ffc12f348e",
+                "928bce5a02b999e0",
+                "96890f5ea8358708"
+            ]
+        ]
+    },
+    {
+        "id": "c86fc12fae4a74dc",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Booking Function",
+        "func": "msg.pnr = Math.floor((Math.random() * 1000000) + 100000);\nmsg.trainName = msg.traindetail.docs[0].name;\nmsg.from = msg.traindetail.docs[0].from\nmsg.to = msg.traindetail.docs[0].to\nmsg.time = msg.traindetail.docs[0].time\nvar date = msg.date\nmsg.date = date.substring(0, 10)\nmsg.payload = {\n    \"pnr\": msg.pnr, \n    \"trainNumber\": msg.train, \n    \"date\": msg.date, \n    \"ticketcount\": msg.ticketcount, \n    \"by\": global.get('email'), \n    \"pname\": msg.pname,\n    \"trainName\": msg.traindetail.docs[0].name,\n    \"from\": msg.traindetail.docs[0].from,\n    \"to\": msg.traindetail.docs[0].to,\n    \"time\":msg.traindetail.docs[0].time,\n    }\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 740,
+        "wires": [
+            [
+                "927e3701789bc6ab"
+            ]
+        ]
+    },
+    {
+        "id": "6312b0bb3794ba69",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Fetch train Details",
+        "func": "msg.train = msg.payload.trainumber,\nmsg.ticketcount = msg.payload.ticketcount,\nmsg.date = msg.payload.date,\nmsg.pname = msg.payload.pname\nmsg.payload = msg.payload = {\n    \"selector\": {\n        \"trainNo\": msg.train\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 600,
+        "wires": [
+            [
+                "debc8161db99bc11"
+            ]
+        ]
+    },
+    {
+        "id": "debc8161db99bc11",
+        "type": "cloudantplus in",
+        "z": "9839df22ee52efd2",
+        "name": "Get Train",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "train-info",
+        "service": "_ext_",
+        "search": "_query_",
+        "design": "",
+        "index": "",
+        "x": 520,
+        "y": 600,
+        "wires": [
+            [
+                "3e70aa7b354050d7"
+            ]
+        ]
+    },
+    {
+        "id": "3e70aa7b354050d7",
+        "type": "switch",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "property": "payload.bookmark",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "nil",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 670,
+        "y": 600,
+        "wires": [
+            [
+                "b1ae5c2c47ce3e4f"
+            ],
+            [
+                "65ff87cbb6feb65e"
+            ]
+        ]
+    },
+    {
+        "id": "65ff87cbb6feb65e",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Verification",
+        "func": "msg.traindetail = msg.payload;\nvar available = msg.payload.docs[0].tickets\nif (msg.ticketcount == 0){\n    msg.payload = \"Ticket count must be greater than zero\"\n}\n// else if(false){\n//     msg.payload = \"The date must not be in the past\"\n// }\nelse if (msg.ticketcount <= available) {\n    msg.payload = \"Book\"\n} else {\n    msg.payload = \"Sorry no tickets available!!\"\n}\n// msg.payload = msg.payload\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 620,
+        "wires": [
+            [
+                "aea1606c10c3a018"
+            ]
+        ]
+    },
+    {
+        "id": "aea1606c10c3a018",
+        "type": "switch",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Ticket count must be greater than zero",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "The date must not be in the past",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Sorry no tickets available!!",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Book",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 990,
+        "y": 620,
+        "wires": [
+            [
+                "ee21e58b8a11a5d9"
+            ],
+            [
+                "ee21e58b8a11a5d9"
+            ],
+            [
+                "ee21e58b8a11a5d9"
+            ],
+            [
+                "c86fc12fae4a74dc"
+            ]
+        ]
+    },
+    {
+        "id": "4cf88758c5b79a14",
+        "type": "cloudantplus out",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "train-info",
+        "service": "_ext_",
+        "payonly": true,
+        "operation": "insert",
+        "x": 1120,
+        "y": 700,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "96890f5ea8358708",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Update train table",
+        "func": "msg.payload = {\n    \"_id\": msg.traindetail.docs[0]._id,\n    \"_rev\": msg.traindetail.docs[0]._rev,\n    \"trainNo\": msg.traindetail.docs[0].trainNo,\n    \"name\": msg.traindetail.docs[0].name,\n    // \"available\": {\n    //     \"2022-12-14T18:30:00.000Z\": 10,\n    //     \"2022-12-21T18:30:00.000Z\": 30,\n    //     \"2022-12-28T18:30:00.000Z\": 25,\n    //     \"2023-01-04T18:30:00.000Z\": 100\n    // },\n    \"available\": msg.traindetail.docs[0].available,\n    \"tickets\": msg.traindetail.docs[0].tickets-msg.ticketcount,\n    \"from\": msg.traindetail.docs[0].from,\n    \"to\": msg.traindetail.docs[0].to,\n    \"time\": msg.traindetail.docs[0].time\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 910,
+        "y": 720,
+        "wires": [
+            [
+                "4cf88758c5b79a14"
+            ]
+        ]
+    },
+    {
+        "id": "b1ae5c2c47ce3e4f",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "No train Found",
+        "func": "msg.payload=\"No train found\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 840,
+        "y": 580,
+        "wires": [
+            [
+                "f94525fd77a76887"
+            ]
+        ]
+    },
+    {
+        "id": "f94525fd77a76887",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "No train Found",
+        "x": 1040,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ee21e58b8a11a5d9",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Error",
+        "x": 1230,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bd5bb377da40c89a",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Booking Sucessful",
+        "x": 1150,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ef7b81ffc12f348e",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": " Booking Sucessful",
+        "func": "msg.payload = \"Ticket Booked Sucessfully with PNR Number: \"+msg.pnr+\".\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 760,
+        "wires": [
+            [
+                "bd5bb377da40c89a"
+            ]
+        ]
+    },
+    {
+        "id": "6deb0f1737c95ac7",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Current Train Location",
+        "func": "var lat = msg.payload.lat\nvar long = msg.payload.long\n\nmsg.payload = { \"name\": \"Train Location\", \n    \"lat\": msg.payload.lat, \n    \"lon\": msg.payload.long, \n    \"icon\": \"fa-train\",\n    \"panit\": true,\n    \"toptitle\": \"Live Location\"}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 1000,
+        "wires": [
+            [
+                "c9ef4998033d6c39"
+            ]
+        ]
+    },
+    {
+        "id": "c9ef4998033d6c39",
+        "type": "ui_worldmap",
+        "z": "9839df22ee52efd2",
+        "group": "124ddc169a601e01",
+        "order": 2,
+        "width": "0",
+        "height": "0",
+        "name": "Location Map",
+        "lat": "8.735640",
+        "lon": "77.708161",
+        "zoom": "12",
+        "layer": "OSMC",
+        "cluster": "",
+        "maxage": "",
+        "usermenu": "hide",
+        "layers": "hide",
+        "panit": "false",
+        "panlock": "false",
+        "zoomlock": "false",
+        "hiderightclick": "true",
+        "coords": "deg",
+        "showgrid": "false",
+        "showruler": "false",
+        "allowFileDrop": "false",
+        "path": "/worldmap",
+        "overlist": "DN,RW",
+        "maplist": "OSMG,OSMC,EsriC,EsriS,EsriT,EsriDG,UKOS",
+        "mapname": "",
+        "mapurl": "",
+        "mapopt": "",
+        "mapwms": false,
+        "x": 680,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "bb2ee8b018eceb53",
+        "type": "qrcode-generator",
+        "z": "9839df22ee52efd2",
+        "name": "QR Code",
+        "qrtype": "text2qr",
+        "text2qrText": "",
+        "ssid": "",
+        "hiddenssid": false,
+        "wifitype": "",
+        "phonenum": "",
+        "smsphonenum": "",
+        "smstext": "",
+        "mailto": "",
+        "mailsubject": "",
+        "mailbody": "",
+        "latitude": "",
+        "longitude": "",
+        "colorlight": "#ffffff",
+        "colordark": "#000000",
+        "printstatus": false,
+        "x": 1120,
+        "y": 800,
+        "wires": [
+            [
+                "580f0d56ccf5f7c4"
+            ]
+        ]
+    },
+    {
+        "id": "928bce5a02b999e0",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "QR Code Generator",
+        "func": "msg.qrcodeinput = \"\" + msg.payload.result.id\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 800,
+        "wires": [
+            [
+                "bb2ee8b018eceb53"
+            ]
+        ]
+    },
+    {
+        "id": "3acb0412793afdd6",
+        "type": "ibmiot in",
+        "z": "9839df22ee52efd2",
+        "authentication": "apiKey",
+        "apiKey": "8a3a05af41b88823",
+        "inputType": "evt",
+        "logicalInterface": "",
+        "ruleId": "",
+        "deviceId": "",
+        "applicationId": "",
+        "deviceType": "+",
+        "eventType": "+",
+        "commandType": "",
+        "format": "json",
+        "name": "IBM IoT",
+        "service": "registered",
+        "allDevices": "",
+        "allApplications": "",
+        "allDeviceTypes": true,
+        "allLogicalInterfaces": "",
+        "allEvents": true,
+        "allCommands": "",
+        "allFormats": "",
+        "qos": 0,
+        "x": 130,
+        "y": 1000,
+        "wires": [
+            [
+                "6deb0f1737c95ac7"
+            ]
+        ]
+    },
+    {
+        "id": "7331be1bbb64f5b2",
+        "type": "html-to-pdf",
+        "z": "9839df22ee52efd2",
+        "name": "Generating Ticket",
+        "format": "A4",
+        "zoom": "100",
+        "orientation": "Portrait",
+        "width": "",
+        "height": "",
+        "marginTop": 1,
+        "marginLeft": 1,
+        "marginBottom": 1,
+        "marginRight": 1,
+        "marginTopUnits": "cm",
+        "marginLeftUnits": "cm",
+        "marginBottomUnits": "cm",
+        "marginRightUnits": "cm",
+        "omitBackground": true,
+        "printGraphics": false,
+        "x": 1130,
+        "y": 860,
+        "wires": [
+            [
+                "c1a5627b328fc338"
+            ]
+        ]
+    },
+    {
+        "id": "580f0d56ccf5f7c4",
+        "type": "template",
+        "z": "9839df22ee52efd2",
+        "name": "Generating Ticket",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<html>\n<head>\n    <style>\n        .card {\n            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);\n            transition: 0.3s;\n            width: 700px;\n            position: relative;\n            left: 250px;\n        }\n        .card:hover {\n            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);\n        }\n        .container {\n            padding: 2px 60px;\n        }\n        #rail {\n            width: 120px;\n            object-fit: cover;\n            position: absolute;\n            top: 90px;\n            left: 700px;\n            border-radius: 10px;\n        }\n        h1 {\n            text-align: center;\n        }\n        #to {\n            position: relative;\n            left: 150px;\n\n        }\n    </style>\n</head>\n\n<body>\n    <h1>E-Ticket</h1>\n    <img src=\"{{payload}}\" id=\"rail\" alt=\"\">\n    <div class=\"card\">\n        <div class=\"container\">\n            <p>PNR Number: {{pnr}}</p>\n            <p>Train Name: {{trainName}}</p>\n            <p>Passenger Name: {{pname}} </p>\n            <p style=\"margin:0;display:inline;float:left\">From: {{from}}</p>\n            <p id=\"to\">To: {{to}}</p>\n            <p>Depature Date: {{date}}</p>\n            <p>Depature Time: {{time}} </p>\n            <p>Tickets: {{ticketcount}}</p>\n            </div>\n    </div>\n</body>\n</html>",
+        "output": "str",
+        "x": 910,
+        "y": 860,
+        "wires": [
+            [
+                "7331be1bbb64f5b2"
+            ]
+        ]
+    },
+    {
+        "id": "c1a5627b328fc338",
+        "type": "file",
+        "z": "9839df22ee52efd2",
+        "name": "File Download",
+        "filename": "F:\\IBM Nalayathiran\\Ticket.pdf",
+        "filenameType": "str",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 1340,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9aec14784b6efccb",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Booking Form",
+        "info": "",
+        "x": 110,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "b46c2e89cbd4b9fa",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Live Tracking",
+        "info": "",
+        "x": 110,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "c2094e2436dc75e7",
+        "type": "ui_form",
+        "z": "9839df22ee52efd2",
+        "name": "PNR query",
+        "label": "PNR Enquiry",
+        "group": "473042af20a52485",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "PNR Number",
+                "value": "pnr",
+                "type": "number",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "pnr": ""
+        },
+        "payload": "",
+        "submit": "Fetch",
+        "cancel": "Cancel",
+        "topic": "",
+        "topicType": "str",
+        "splitLayout": "",
+        "className": "",
+        "x": 130,
+        "y": 1160,
+        "wires": [
+            [
+                "d242601545a09ec0"
+            ]
+        ]
+    },
+    {
+        "id": "d242601545a09ec0",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Get PNR Details",
+        "func": "msg.pnr = msg.payload.pnr\nmsg.payload = {\n    \"selector\": {\n        \"pnr\": msg.pnr\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 320,
+        "y": 1160,
+        "wires": [
+            [
+                "24937707932ac8e6"
+            ]
+        ]
+    },
+    {
+        "id": "24937707932ac8e6",
+        "type": "cloudantplus in",
+        "z": "9839df22ee52efd2",
+        "name": "PNR Details",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "booking-table",
+        "service": "_ext_",
+        "search": "_query_",
+        "design": "",
+        "index": "",
+        "x": 510,
+        "y": 1160,
+        "wires": [
+            [
+                "9afe3abe4884865a"
+            ]
+        ]
+    },
+    {
+        "id": "9afe3abe4884865a",
+        "type": "switch",
+        "z": "9839df22ee52efd2",
+        "name": "",
+        "property": "payload.bookmark",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "nil",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 710,
+        "y": 1160,
+        "wires": [
+            [
+                "b6e4e22dd19bfe88"
+            ],
+            [
+                "b2c83b2cc2580de3"
+            ]
+        ]
+    },
+    {
+        "id": "b6e4e22dd19bfe88",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "No detailsFound",
+        "func": "msg.payload=\"No details found\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 1120,
+        "wires": [
+            [
+                "3dca9edd64336d9d"
+            ]
+        ]
+    },
+    {
+        "id": "3dca9edd64336d9d",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "No details Found",
+        "x": 1090,
+        "y": 1120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "77ead88fef8e9243",
+        "type": "ui_template",
+        "z": "9839df22ee52efd2",
+        "group": "473042af20a52485",
+        "name": "PNR Status",
+        "order": 0,
+        "width": "6",
+        "height": "5",
+        "format": "<h1 align=\"center\">PNR Status</h1>\n\n<ul style=\"list-style-type: none;\">\n    <li ng-bind-html=\"msg.pnr\"> </li>\n    <li ng-bind-html=\"msg.train\"> </li>\n    <li ng-bind-html=\"msg.name\"> </li>\n    <li ng-bind-html=\"msg.from\"> </li>\n    <li ng-bind-html=\"msg.to\"> </li>\n    <li ng-bind-html=\"msg.date\"> </li>\n    <li ng-bind-html=\"msg.time\"> </li>\n    <li ng-bind-html=\"msg.count\"> </li>\n</ul>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 1070,
+        "y": 1180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b2c83b2cc2580de3",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "PNR Details",
+        "func": "var date = msg.payload.docs[0].date\nmsg.pnr = \"PNR Number: \" + msg.payload.docs[0].pnr\nmsg.train = \"Train Number: \"+msg.payload.docs[0].trainNumber\nmsg.pname = \"Passenger Name: \"+ msg.payload.docs[0].pname \nmsg.name = \"Train Name: \"+msg.payload.docs[0].trainName\nmsg.from = \"From: \"+msg.payload.docs[0].from\nmsg.to = \"To: \"+msg.payload.docs[0].to\nmsg.date = \"Date: \"+msg.payload.docs[0].date\n// msg.date = \"Date: \" + date;\nmsg.count = \"Number of tickets: \"+msg.payload.docs[0].ticketcount\nmsg.time = \"Depature Time: \"+msg.payload.docs[0].time\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 1180,
+        "wires": [
+            [
+                "77ead88fef8e9243"
+            ]
+        ]
+    },
+    {
+        "id": "a527e8a9788a3274",
+        "type": "ui_form",
+        "z": "9839df22ee52efd2",
+        "name": "Service Request",
+        "label": "Select the issue",
+        "group": "8222190b97ebd276",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "options": [
+            {
+                "label": "PNR Number",
+                "value": "pnr",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Seat Cleaning",
+                "value": "seatCleaning",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Water problems",
+                "value": "waterProblems",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Bathroom Cleaning",
+                "value": "bathroomCleaning",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Window/Accessory problems",
+                "value": "waProblems",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Light/Fan problems",
+                "value": "fanProblems",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Others",
+                "value": "other",
+                "type": "checkbox",
+                "required": false,
+                "rows": null
+            },
+            {
+                "label": "Comments",
+                "value": "comment",
+                "type": "multiline",
+                "required": false,
+                "rows": 3
+            }
+        ],
+        "formValue": {
+            "pnr": "",
+            "seatCleaning": false,
+            "waterProblems": false,
+            "bathroomCleaning": false,
+            "waProblems": false,
+            "fanProblems": false,
+            "other": false,
+            "comment": ""
+        },
+        "payload": "",
+        "submit": "submit",
+        "cancel": "cancel",
+        "topic": "",
+        "topicType": "str",
+        "splitLayout": "",
+        "className": "",
+        "x": 140,
+        "y": 1300,
+        "wires": [
+            [
+                "33fac604280c245b"
+            ]
+        ]
+    },
+    {
+        "id": "33fac604280c245b",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Update the request",
+        "func": "msg.payload = {\n    \"pnr\": msg.payload.pnr,\n    \"seatCleaning\": msg.payload.seatCleaning,\n    \"waterProblems\": msg.payload.waterProblems,\n    \"bathroomCleaning\": msg.payload.bathroomCleaning,\n    \"waProblems\": msg.payload.waProblems,\n    \"fanProblems\": msg.payload.fanProblems,\n    \"other\": msg.payload.other,\n    \"comment\": msg.payload.comment\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 1300,
+        "wires": [
+            [
+                "9d1fb2311f4e6135"
+            ]
+        ]
+    },
+    {
+        "id": "9d1fb2311f4e6135",
+        "type": "cloudantplus out",
+        "z": "9839df22ee52efd2",
+        "name": "Service Request",
+        "cloudant": "4946f23f5cacb39c",
+        "database": "service-request",
+        "service": "_ext_",
+        "payonly": true,
+        "operation": "insert",
+        "x": 560,
+        "y": 1300,
+        "wires": [
+            [
+                "74b001cfadbb21b7"
+            ]
+        ]
+    },
+    {
+        "id": "ca268136054fe9bd",
+        "type": "ui_toast",
+        "z": "9839df22ee52efd2",
+        "position": "dialog",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 1,
+        "ok": "OK",
+        "cancel": "",
+        "raw": false,
+        "className": "",
+        "topic": "",
+        "name": "Requested Sucessfully",
+        "x": 1020,
+        "y": 1300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "74b001cfadbb21b7",
+        "type": "function",
+        "z": "9839df22ee52efd2",
+        "name": "Requested Sucessfully",
+        "func": "msg.payload = \"Request has been submitted successfully. Sorry for the inconvenience caused.\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 780,
+        "y": 1300,
+        "wires": [
+            [
+                "ca268136054fe9bd"
+            ]
+        ]
+    },
+    {
+        "id": "8e5c3d444cc68b20",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "PNR Enquiry",
+        "info": "",
+        "x": 110,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "e0fadbf7a97195e1",
+        "type": "comment",
+        "z": "9839df22ee52efd2",
+        "name": "Service Request",
+        "info": "",
+        "x": 120,
+        "y": 1240,
+        "wires": []
+    },
+    {
+        "id": "4946f23f5cacb39c",
+        "type": "cloudantplus",
+        "host": "https://apikey-v2-2vji5kegi5d7aaygtccqtt616y5u2yva2mpawe7ps7gp:15bc42554c2a4881a11889247e6ab66e@58980990-cf73-48b6-bbee-db90262aae86-bluemix.cloudantnosqldb.appdomain.cloud",
+        "name": "Database",
+        "useapikey": true
+    },
+    {
+        "id": "bd0ae5386ad7daf2",
+        "type": "ui_group",
+        "name": "LoginPage",
+        "tab": "59ce8c49ecb5f8ce",
+        "order": 6,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8fe9d7939381df1f",
+        "type": "ui_group",
+        "name": "HomePage",
+        "tab": "59ce8c49ecb5f8ce",
+        "order": 10,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "6fa057d618bea6c0",
+        "type": "ui_group",
+        "name": "BookingPage",
+        "tab": "59ce8c49ecb5f8ce",
+        "order": 5,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "124ddc169a601e01",
+        "type": "ui_group",
+        "name": "LiveTrackingDetails",
+        "tab": "59ce8c49ecb5f8ce",
+        "order": 7,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8a3a05af41b88823",
+        "type": "ibmiot",
+        "name": "IBM IOT Api",
+        "keepalive": "60",
+        "serverName": "",
+        "cleansession": true,
+        "appId": "",
+        "shared": false
+    },
+    {
+        "id": "473042af20a52485",
+        "type": "ui_group",
+        "name": "PNRQuery",
+        "tab": "59ce8c49ecb5f8ce",
+        "order": 8,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": "PNRQuery"
+    },
+    {
+        "id": "8222190b97ebd276",
+        "type": "ui_group",
+        "name": "ServiceRequest",
+        "tab": "59ce8c49ecb5f8ce",
+        "order": 9,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "59ce8c49ecb5f8ce",
+        "type": "ui_tab",
+        "name": "App",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
